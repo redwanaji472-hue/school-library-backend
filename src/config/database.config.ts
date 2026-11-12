@@ -8,7 +8,9 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
     type: 'postgres',
     autoLoadEntities: true,
     // TODO: Set synchronize to false after the first successful deploy and use migrations instead
-    synchronize: true, // Temporarily enabled to create tables on Railway + Supabase
+    synchronize: true, 
+    // Temporarily enabled to create tables on Railway + Supabase
+    dropSchema: true,
     retryAttempts: 2,
     retryDelay: 1000,
     logging: ['error', 'warn'],
