@@ -1,0 +1,43 @@
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +12ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReservationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mInventoryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReadingActivitiesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPointsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMlPredictionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditLogsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:54 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +198ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStudentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBooksModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLoansModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +385ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/api/users}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mStudentsController {/api/students}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/students, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBooksController {/api/books}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/books, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mLoansController {/api/loans}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/loans, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReservationsController {/api/reservations}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mInventoryController {/api/inventory}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReadingActivitiesController {/api/reading-activities}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPointsController {/api/points}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mMlPredictionsController {/api/ml-predictions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditLogsController {/api/audit-logs}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7404  - [39m11/11/2026, 2:14:55 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +2ms[39m
+🚀 Server is running on: http://localhost:3000/api
