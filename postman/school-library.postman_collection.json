@@ -1,0 +1,960 @@
+{
+  "info": {
+    "name": "School Library API",
+    "description": "Smart School Library Management System - Full API collection\n\n## Setup\n1. Set the `baseUrl` variable to your server (default: http://localhost:3000/api)\n2. Run the `Login` request to get a token\n3. The token auto-saves to `{{token}}` variable\n4. All other requests use Bearer auth automatically",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "description": "API base URL"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "description": "JWT token (auto-filled after login)"
+    },
+    {
+      "key": "userId",
+      "value": "1",
+      "description": "Sample user ID"
+    },
+    {
+      "key": "studentId",
+      "value": "1",
+      "description": "Sample student ID"
+    },
+    {
+      "key": "bookId",
+      "value": "1",
+      "description": "Sample book ID"
+    },
+    {
+      "key": "loanId",
+      "value": "1",
+      "description": "Sample loan ID"
+    },
+    {
+      "key": "reservationId",
+      "value": "1",
+      "description": "Sample reservation ID"
+    },
+    {
+      "key": "activityId",
+      "value": "1",
+      "description": "Sample reading activity ID"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "auth": null,
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "  pm.collectionVariables.set('token', json.access_token);",
+                  "  console.log('Token saved!');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": {\n    \"id\": 2,\n    \"username\": \"admin\",\n    \"fullName\": \"System Admin\",\n    \"role\": \"admin\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Register",
+          "request": {
+            "auth": null,
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleId\": 2,\n  \"fullName\": \"Sara Librarian\",\n  \"username\": \"sara\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": 3,\n  \"username\": \"sara\",\n  \"fullName\": \"Sara Librarian\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleId\": 3,\n  \"fullName\": \"Mohamed Supervisor\",\n  \"username\": \"mohamed\",\n  \"password\": \"password123\",\n  \"isActive\": true\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Name\",\n  \"isActive\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            }
+          }
+        },
+        {
+          "name": "Get Student by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Student by QR Code",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/students/qr/STU-AB12CD",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "qr", "STU-AB12CD"]
+            }
+          }
+        },
+        {
+          "name": "Create Student (QR auto-generated)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"classId\": 1,\n  \"fullName\": \"Ahmed Mohamed\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('studentId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"active\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Get All Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["books"]
+            }
+          }
+        },
+        {
+          "name": "Get Book by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books/{{bookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "{{bookId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Book (auto-generates copies)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["books"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 1,\n  \"isbn\": \"978-1234567890\",\n  \"title\": \"The Great Gatsby\",\n  \"author\": \"F. Scott Fitzgerald\",\n  \"publisher\": \"Scribner\",\n  \"publicationYear\": 1925,\n  \"language\": \"English\",\n  \"pages\": 180,\n  \"readingLevel\": \"intermediate\",\n  \"description\": \"A story of wealth and dreams in the Jazz Age\",\n  \"numberOfCopies\": 3\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('bookId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Book",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/books/{{bookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "{{bookId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Great Gatsby - Updated Edition\",\n  \"description\": \"Updated description\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Book",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/books/{{bookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["books", "{{bookId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Loans",
+      "item": [
+        {
+          "name": "Get All Loans",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/loans",
+              "host": ["{{baseUrl}}"],
+              "path": ["loans"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Loans",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/loans/active",
+              "host": ["{{baseUrl}}"],
+              "path": ["loans", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get Overdue Loans",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/loans/overdue",
+              "host": ["{{baseUrl}}"],
+              "path": ["loans", "overdue"]
+            }
+          }
+        },
+        {
+          "name": "Get Loan by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/loans/{{loanId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["loans", "{{loanId}}"]
+            }
+          }
+        },
+        {
+          "name": "Checkout Book (scan QR codes)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loans/checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["loans", "checkout"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentQrCode\": \"STU-AB12CD\",\n  \"copyQrCode\": \"BK-AB12CD\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('loanId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Return Book",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/loans/{{loanId}}/return",
+              "host": ["{{baseUrl}}"],
+              "path": ["loans", "{{loanId}}", "return"]
+            }
+          }
+        },
+        {
+          "name": "Renew Loan",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/loans/{{loanId}}/renew",
+              "host": ["{{baseUrl}}"],
+              "path": ["loans", "{{loanId}}", "renew"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"extendDays\": 7\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "Get All Reservations",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": ["{{baseUrl}}"],
+              "path": ["reservations"]
+            }
+          }
+        },
+        {
+          "name": "Get Pending Reservations",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reservations/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["reservations", "pending"]
+            }
+          }
+        },
+        {
+          "name": "Get Reservation by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reservations", "{{reservationId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": ["{{baseUrl}}"],
+              "path": ["reservations"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": 1,\n  \"studentId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('reservationId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cancel Reservation",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["reservations", "{{reservationId}}", "cancel"]
+            }
+          }
+        },
+        {
+          "name": "Fulfill Reservation",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}/fulfill",
+              "host": ["{{baseUrl}}"],
+              "path": ["reservations", "{{reservationId}}", "fulfill"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Inventory Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/inventory/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "summary"]
+            }
+          }
+        },
+        {
+          "name": "Get Copies by Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/inventory/copies?status=available",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "copies"],
+              "query": [
+                { "key": "status", "value": "available" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Low Stock Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/inventory/low-stock?threshold=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "low-stock"],
+              "query": [
+                { "key": "threshold", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Copy Status",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/inventory/copies/1/status?status=maintenance",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "copies", "1", "status"],
+              "query": [
+                { "key": "status", "value": "maintenance" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reading Activities",
+      "item": [
+        {
+          "name": "Get All Activities",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reading-activities",
+              "host": ["{{baseUrl}}"],
+              "path": ["reading-activities"]
+            }
+          }
+        },
+        {
+          "name": "Get Pending Activities",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reading-activities/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["reading-activities", "pending"]
+            }
+          }
+        },
+        {
+          "name": "Get Activities by Student",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reading-activities/student/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reading-activities", "student", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Activity by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reading-activities/{{activityId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reading-activities", "{{activityId}}"]
+            }
+          }
+        },
+        {
+          "name": "Submit Reading Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reading-activities",
+              "host": ["{{baseUrl}}"],
+              "path": ["reading-activities"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": 1,\n  \"type\": \"summary\",\n  \"summaryText\": \"This book tells the story of a young man chasing his dreams during the Jazz Age. The themes of ambition and disillusionment are central.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('activityId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Review Activity (approve + award points)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reading-activities/{{activityId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["reading-activities", "{{activityId}}", "review"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reviewerId\": 1,\n  \"status\": \"approved\",\n  \"points\": 15\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Review Activity (reject)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reading-activities/{{activityId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["reading-activities", "{{activityId}}", "review"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reviewerId\": 1,\n  \"status\": \"needs_revision\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Activity",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/reading-activities/{{activityId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reading-activities", "{{activityId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Points",
+      "item": [
+        {
+          "name": "Get All Transactions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/points",
+              "host": ["{{baseUrl}}"],
+              "path": ["points"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Points History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/points/student/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["points", "student", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Balance",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/points/balance/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["points", "balance", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Leaderboard",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/points/leaderboard?limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["points", "leaderboard"],
+              "query": [
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Award Points",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/points",
+              "host": ["{{baseUrl}}"],
+              "path": ["points"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": 1,\n  \"points\": 20,\n  \"reason\": \"Reading challenge completed\",\n  \"activityId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Deduct Points",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/points",
+              "host": ["{{baseUrl}}"],
+              "path": ["points"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": 1,\n  \"points\": -5,\n  \"reason\": \"Late return penalty\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ML Predictions",
+      "item": [
+        {
+          "name": "Predict Student Risk",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/ml-predictions/risk/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ml-predictions", "risk", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Recommend Books for Student",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/ml-predictions/recommend/{{studentId}}?limit=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["ml-predictions", "recommend", "{{studentId}}"],
+              "query": [
+                { "key": "limit", "value": "5" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Library Health Metrics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/ml-predictions/library-health",
+              "host": ["{{baseUrl}}"],
+              "path": ["ml-predictions", "library-health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit Logs",
+      "item": [
+        {
+          "name": "Get All Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/audit-logs",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit-logs"]
+            }
+          }
+        },
+        {
+          "name": "Get Logs by User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/audit-logs/user/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit-logs", "user", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Logs by Entity Type",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/audit-logs/entity?type=book",
+              "host": ["{{baseUrl}}"],
+              "path": ["audit-logs", "entity"],
+              "query": [
+                { "key": "type", "value": "book" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

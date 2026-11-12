@@ -9,5 +9,5 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
   password: configService.get<string>('DB_PASS', 'postgres'),
   database: configService.get<string>('DB_NAME', 'school_library'),
   autoLoadEntities: true,
-  synchronize: true, // يفضل تعطيله في بيئة الإنتاج واستخدام Migrations
+  synchronize: configService.get<string>('NODE_ENV') !== 'production', // تعطيله في الإنتاج
 });

@@ -1,6 +1,35 @@
-/dist
-/node_modules
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment
 .env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Logs
 *.log
+npm-debug.log*
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Coverage
 coverage/
+
+# Vercel
+.vercel/
+
+# Temp files
+*.bat
+*_output.txt
+*_result.txt
+server_run.txt
