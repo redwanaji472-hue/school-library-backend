@@ -6,9 +6,11 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // Foreign key column - explicitly defined once
   @Column({ name: 'role_id' })
   roleId: number;
 
+  // Relation - JoinColumn references the same column name
   @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn({ name: 'role_id' })
   role: Role;

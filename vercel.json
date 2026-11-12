@@ -1,9 +1,13 @@
 {
   "version": 2,
+  "name": "school-library-backend",
   "builds": [
     {
       "src": "src/main.ts",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["dist/**", "node_modules/**"]
+      }
     }
   ],
   "routes": [
@@ -12,7 +16,10 @@
       "dest": "src/main.ts"
     }
   ],
-  "env": {
-    "VERCEL": "1"
+  "functions": {
+    "src/main.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
   }
 }

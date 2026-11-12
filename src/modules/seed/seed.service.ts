@@ -17,42 +17,66 @@ export class SeedService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    await this.seedRoles();
-    await this.seedAdminUser();
+    try {
+      await this.seedRoles();
+      await this.seedAdminUser();
+    } catch (error) {
+      this.logger.error('Failed to run seed service', error.stack);
+      // Do not crash the app; just log the error
+    }
   }
 
   private async seedRoles() {
-    const count = await this.roleRepository.count();
-    if (count > 0) return;
+    try {
+      const roles = ['admin', 'librarian', 'supervisor'];
 
-    const roles = [
-      { name: 'admin' },
-      { name: 'librarian' },
-      { name: 'supervisor' },
-    ];
+      for (const roleName of roles) {
+        const exists = await this.roleRepository.findOne({ where: { name: roleName } });
+        if (!exists) {
+          await this.roleRepository.save(this.roleRepository.create({ name: roleName }));
+          this.logger.log(`Created role: ${roleName}`);
+        }
+      }
 
-    for (const role of roles) {
-      await this.roleRepository.save(this.roleRepository.create(role));
+      this.logger.log('✅ Roles seeded successfully');
+    } catch (error) {
+      this.logger.error('Failed to seed roles', error.stack);
+      throw error;
     }
-    this.logger.log('Seeded roles: admin, librarian, supervisor');
   }
 
   private async seedAdminUser() {
-    const existing = await this.userRepository.findOne({ where: { username: 'admin' } });
-    if (existing) return;
+    try {
+      const existing = await this.userRepository.findOne({ where: { username: 'admin' } });
+      if (existing) {
+        this.logger.log('Admin user already exists, skipping seed');
+        return;
+      }
 
-    const adminRole = await this.roleRepository.findOne({ where: { name: 'admin' } });
-    if (!adminRole) return;
+      const adminRole = await this.roleRepository.findOne({ where: { name: 'admin' } });
+      if (!adminRole) {
+        throw new Error('Admin role not found. Make sure roles are seeded first.');
+      }
 
-    const password = await bcrypt.hash('admin123', 10);
-    const admin = this.userRepository.create({
-      roleId: adminRole.id,
-      fullName: 'System Admin',
-      username: 'admin',
-      password,
-      isActive: true,
-    });
-    await this.userRepository.save(admin);
-    this.logger.log('Seeded admin user (username: admin, password: admin123)');
+      // Read admin password from environment variable with safe fallback
+      const rawPassword = process.env.ADMIN_PASSWORD || 'admin123';
+      const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+      const admin = this.userRepository.create({
+        roleId: adminRole.id,
+        fullName: 'System Admin',
+        username: 'admin',
+        password: hashedPassword,
+        isActive: true,
+      });
+
+      await this.userRepository.save(admin);
+      this.logger.log('✅ Admin user created successfully');
+      this.logger.log(`   Username: admin`);
+      this.logger.log(`   Password: ${rawPassword === 'admin123' ? 'admin123 (default - CHANGE IMMEDIATELY)' : '(from ADMIN_PASSWORD env var)'}`);
+    } catch (error) {
+      this.logger.error('Failed to seed admin user', error.stack);
+      throw error;
+    }
   }
 }

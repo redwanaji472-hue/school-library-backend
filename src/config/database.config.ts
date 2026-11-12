@@ -2,21 +2,20 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOptions => {
-  const isProduction = configService.get<string>('NODE_ENV') === 'production';
   const databaseUrl = configService.get<string>('DATABASE_URL');
 
   const baseConfig: TypeOrmModuleOptions = {
     type: 'postgres',
     autoLoadEntities: true,
-    synchronize: !isProduction, // disabled in production — use migrations
-    migrations: ['dist/migrations/*.js'],
-    migrationsRun: isProduction, // auto-run migrations in production
-    retryAttempts: 2,           // fail fast instead of retrying 9 times
+    // TODO: Set synchronize to false after the first successful deploy and use migrations instead
+    synchronize: true, // Temporarily enabled to create tables on Railway + Supabase
+    retryAttempts: 2,
     retryDelay: 1000,
+    logging: ['error', 'warn'],
   };
 
   if (databaseUrl) {
-    // Cloud (Vercel + Supabase): use connection pooler URL with SSL
+    // Cloud (Railway + Supabase): use DATABASE_URL with SSL
     return {
       ...baseConfig,
       url: databaseUrl,
@@ -24,7 +23,7 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
     };
   }
 
-  // Local development: individual env vars, no SSL
+  // Local development: individual env vars
   return {
     ...baseConfig,
     host: configService.get<string>('DB_HOST', 'localhost'),
