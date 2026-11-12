@@ -21,7 +21,7 @@ export class SeedService implements OnModuleInit {
       await this.seedRoles();
       await this.seedAdminUser();
     } catch (error) {
-      this.logger.error('Failed to run seed service', error.stack);
+      this.logger.error('Failed to run seed service', error);
       // Do not crash the app; just log the error
     }
   }
@@ -40,7 +40,7 @@ export class SeedService implements OnModuleInit {
 
       this.logger.log('✅ Roles seeded successfully');
     } catch (error) {
-      this.logger.error('Failed to seed roles', error.stack);
+      this.logger.error('Failed to seed roles', error);
       throw error;
     }
   }
@@ -75,7 +75,7 @@ export class SeedService implements OnModuleInit {
       this.logger.log(`   Username: admin`);
       this.logger.log(`   Password: ${rawPassword === 'admin123' ? 'admin123 (default - CHANGE IMMEDIATELY)' : '(from ADMIN_PASSWORD env var)'}`);
     } catch (error) {
-      this.logger.error('Failed to seed admin user', error.stack);
+      this.logger.error('Failed to seed admin user', error);
       throw error;
     }
   }
