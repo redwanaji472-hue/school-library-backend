@@ -26,15 +26,15 @@ export class UsersService {
   async create(dto: CreateUserDto) {
     const existing = await this.userRepository.findOne({ where: { username: dto.username } });
     if (existing) throw new ConflictException('Username already exists');
-    const passwordHash = await bcrypt.hash(dto.password, 10);
-    const user = this.userRepository.create({ ...dto, passwordHash });
+    const password = await bcrypt.hash(dto.password, 10);
+    const user = this.userRepository.create({ ...dto, password });
     return this.userRepository.save(user);
   }
 
   async update(id: number, dto: UpdateUserDto) {
     const user = await this.findOne(id);
     if (dto.password) {
-      (user as any).passwordHash = await bcrypt.hash(dto.password, 10);
+      (user as any).password = await bcrypt.hash(dto.password, 10);
       delete dto.password;
     }
     Object.assign(user, dto);

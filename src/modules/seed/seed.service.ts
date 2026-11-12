@@ -44,12 +44,12 @@ export class SeedService implements OnModuleInit {
     const adminRole = await this.roleRepository.findOne({ where: { name: 'admin' } });
     if (!adminRole) return;
 
-    const passwordHash = await bcrypt.hash('admin123', 10);
+    const password = await bcrypt.hash('admin123', 10);
     const admin = this.userRepository.create({
       roleId: adminRole.id,
       fullName: 'System Admin',
       username: 'admin',
-      passwordHash,
+      password,
       isActive: true,
     });
     await this.userRepository.save(admin);

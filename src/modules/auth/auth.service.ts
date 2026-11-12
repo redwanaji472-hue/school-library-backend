@@ -23,7 +23,7 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
 
     const payload = { sub: user.id, username: user.username, role: user.role?.name };
@@ -46,12 +46,12 @@ export class AuthService {
     });
     if (existing) throw new ConflictException('Username already exists');
 
-    const passwordHash = await bcrypt.hash(registerDto.password, 10);
+    const password = await bcrypt.hash(registerDto.password, 10);
     const user = this.userRepository.create({
       roleId: registerDto.roleId,
       fullName: registerDto.fullName,
       username: registerDto.username,
-      passwordHash,
+      password,
       isActive: registerDto.isActive ?? true,
     });
 
