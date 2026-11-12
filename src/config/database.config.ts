@@ -8,9 +8,8 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
     type: 'postgres',
     autoLoadEntities: true,
     // TODO: Set synchronize to false after the first successful deploy and use migrations instead
-   synchronize: true,
-dropSchema: true,   // مؤقت جدًا
-migrationsRun: false,
+   synchronize: false,
+
     retryAttempts: 2,
     retryDelay: 1000,
     logging: ['error', 'warn'],
