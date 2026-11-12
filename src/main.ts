@@ -30,7 +30,19 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+
+  // On Vercel the swagger-ui-dist static files are not bundled into the
+  // serverless function, so /docs/*.css, *.js, and favicons 404. Load
+  // them from a CDN instead of serving them locally.
+  const CDN = 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14';
+  SwaggerModule.setup('docs', app, document, {
+    customCssUrl: `${CDN}/swagger-ui.css`,
+    customJs: [
+      `${CDN}/swagger-ui-bundle.js`,
+      `${CDN}/swagger-ui-standalone-preset.js`,
+    ],
+    customfavIcon: `${CDN}/favicon-32x32.png`,
+  });
 
   // init() sets up routes/middleware without binding a port
   await app.init();
@@ -45,7 +57,7 @@ export default async function handler(req: express.Request, res: express.Respons
 // ── Local development: start the HTTP server ────────────────────────
 if (!process.env.VERCEL) {
   bootstrap().then(() => {
-    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
     expressApp.listen(port, () => {
       console.log(`🚀 Server is running on: http://localhost:${port}/api`);
       console.log(`📚 Swagger docs: http://localhost:${port}/docs`);
