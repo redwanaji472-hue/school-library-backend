@@ -4,7 +4,19 @@
   "description": "Smart School Library Management System Backend with NestJS and PostgreSQL",
   "author": "Radwan",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/school-library-backend.git"
+  },
+  "keywords": [
+    "nestjs",
+    "postgresql",
+    "typeorm",
+    "library-management",
+    "school",
+    "education"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -17,7 +29,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/config/typeorm.config.ts",
+    "migration:generate": "npm run typeorm -- migration:generate",
+    "migration:create": "npm run typeorm -- migration:create",
+    "migration:run": "npm run typeorm -- migration:run",
+    "migration:revert": "npm run typeorm -- migration:revert",
+    "migration:show": "npm run typeorm -- migration:show",
+    "setup:db": "node scripts/setup-db.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

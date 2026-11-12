@@ -9,6 +9,8 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
     type: 'postgres',
     autoLoadEntities: true,
     synchronize: !isProduction, // disabled in production — use migrations
+    migrations: ['dist/migrations/*.js'],
+    migrationsRun: isProduction, // auto-run migrations in production
     retryAttempts: 2,           // fail fast instead of retrying 9 times
     retryDelay: 1000,
   };
