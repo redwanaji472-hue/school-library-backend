@@ -58,16 +58,22 @@ export class InventoryService {
     const books = await this.bookRepository
       .createQueryBuilder('book')
       .leftJoin('book.copies', 'copy')
-      .leftJoinAndSelect('book.copies', 'allCopies')
+      .select('book.id', 'id')
+      .addSelect('book.title', 'title')
+      .addSelect('book.author', 'author')
+      .addSelect('COUNT(CASE WHEN copy.status = :available THEN 1 END)', 'availableCopies')
       .groupBy('book.id')
-      .having('COUNT(CASE WHEN copy.status = :available THEN 1 END) <= :threshold', { available: 'available', threshold })
-      .getMany();
+      .having('COUNT(CASE WHEN copy.status = :available THEN 1 END) <= :threshold', {
+        available: 'available',
+        threshold,
+      })
+      .getRawMany();
 
-    return books.map((b) => ({
-      id: b.id,
-      title: b.title,
-      author: b.author,
-      availableCopies: (b as any).allCopies?.filter((c: any) => c.status === 'available').length ?? 0,
+    return books.map((book) => ({
+      id: Number(book.id),
+      title: book.title,
+      author: book.author,
+      availableCopies: Number(book.availableCopies),
     }));
   }
 }
