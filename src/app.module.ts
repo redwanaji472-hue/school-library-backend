@@ -13,7 +13,7 @@ import { ReadingActivitiesModule } from './modules/reading-activities/reading-ac
 import { PointsModule } from './modules/points/points.module';
 import { MlPredictionsModule } from './modules/ml-predictions/ml-predictions.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
-import { SeedModule } from './modules/seed/seed.module';
+
 
 @Module({
   imports: [
@@ -34,7 +34,6 @@ import { SeedModule } from './modules/seed/seed.module';
     PointsModule,
     MlPredictionsModule,
     AuditLogsModule,
-    SeedModule,
   ],
 })
 export class AppModule {}

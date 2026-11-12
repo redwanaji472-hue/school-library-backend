@@ -12,6 +12,6 @@ export default new DataSource({
   password: process.env.DB_PASS || 'postgres',
   database: process.env.DB_NAME || 'school_library',
   entities: ['src/**/*.entity.ts'],
-  migrations: ['src/migrations/*.ts'],
+  migrations: [],
   synchronize: false,
 });
