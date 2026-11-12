@@ -89,14 +89,22 @@ npm run migration:revert
 
 | الدليل | الوصف |
 |--------|-------|
+| [START_HERE.md](START_HERE.md) | نقطة البداية - ابدأ من هنا! ⭐ |
 | [QUICK_START.md](QUICK_START.md) | بداية سريعة في 5 دقائق |
 | [ADMIN_SETUP.md](ADMIN_SETUP.md) | إعداد حساب Admin وتأمينه |
+| [API_REFERENCE.md](API_REFERENCE.md) | مرجع كامل لجميع API endpoints |
+| [CURL_EXAMPLES.md](CURL_EXAMPLES.md) | أمثلة cURL جاهزة للاستخدام |
 | [DEPLOYMENT.md](DEPLOYMENT.md) | دليل النشر على Vercel + Supabase |
 | [SECURITY.md](SECURITY.md) | إرشادات وأفضل ممارسات الأمان |
 | [EXAMPLES.md](EXAMPLES.md) | 11 سيناريو عملي مع أمثلة |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | دليل المساهمة في المشروع |
 | [src/migrations/README.md](src/migrations/README.md) | شرح نظام Migrations |
 | [MIGRATIONS_SUMMARY.md](MIGRATIONS_SUMMARY.md) | ملخص شامل للـ Migrations |
+| [FINAL_SUMMARY.md](FINAL_SUMMARY.md) | ملخص كل ما تم إنجازه |
 | [CHECKLIST.md](CHECKLIST.md) | قائمة تحقق كاملة |
+| [CHANGELOG.md](CHANGELOG.md) | سجل التغييرات |
+| [FIX_LOGIN.md](FIX_LOGIN.md) | إصلاح مشكلة Login |
+| [docs/INDEX.md](docs/INDEX.md) | فهرس شامل للتوثيق |
 
 ## 🏗️ هيكل المشروع
 

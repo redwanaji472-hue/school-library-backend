@@ -1,3 +1,17 @@
-// Re-export the Vercel serverless handler from the NestJS entry point.
-// Vercel's @vercel/node builder compiles this file and follows the import.
-export { default } from '../src/main';
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import { AppModule } from '../src/app.module';
+import express from 'express';
+
+const server = express();
+
+export default async (req: any, res: any) => {
+  const app = await NestFactory.create(
+    AppModule,
+    new ExpressAdapter(server),
+  );
+  
+  app.enableCors();
+  await app.init();
+  server(req, res);
+};
