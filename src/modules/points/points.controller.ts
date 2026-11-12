@@ -32,8 +32,9 @@ export class PointsController {
   @Get('leaderboard')
   @ApiOperation({ summary: 'Get students leaderboard by points' })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  getLeaderboard(@Query('limit') limit?: number) {
-    return this.pointsService.getLeaderboard(limit ?? 10);
+  getLeaderboard(@Query('limit') limit?: string) {
+    const parsedLimit = Number(limit);
+    return this.pointsService.getLeaderboard(Number.isInteger(parsedLimit) && parsedLimit > 0 ? parsedLimit : 10);
   }
 
   @Post()
