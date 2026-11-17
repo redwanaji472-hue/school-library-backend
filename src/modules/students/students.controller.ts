@@ -32,7 +32,7 @@ export class StudentsController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create a new student (QR code auto-generated)' })
+  @ApiOperation({ summary: 'Create a student and student login account (QR code auto-generated)' })
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }

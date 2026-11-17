@@ -341,6 +341,18 @@ Authorization: Bearer <token>
 
 ### POST /students
 
+إنشاء سجل طالب وحساب دخول بدور `student` معاً. كلمة المرور تُخزّن مشفّرة، ولا تُعاد في الاستجابة.
+
+**Request:**
+```json
+{
+  "classId": 1,
+  "fullName": "Ahmed Mohamed",
+  "username": "ahmed.mohamed",
+  "password": "StudentPass123"
+}
+```
+
 إضافة طالب جديد.
 
 **Request:**
