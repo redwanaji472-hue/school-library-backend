@@ -19,12 +19,26 @@ export class BooksService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  findAll() {
-    return this.bookRepository.find({ relations: ['category', 'copies'] });
+  findAll(search?: string, categoryId?: number) {
+    const query = this.bookRepository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.category', 'category')
+      .leftJoinAndSelect('book.copies', 'copies')
+      .where('book.isArchived = false');
+
+    if (search?.trim()) {
+      query.andWhere(
+        '(book.title ILIKE :search OR book.author ILIKE :search OR book.isbn ILIKE :search)',
+        { search: `%${search.trim()}%` },
+      );
+    }
+    if (categoryId) query.andWhere('book.categoryId = :categoryId', { categoryId });
+
+    return query.orderBy('book.title', 'ASC').getMany();
   }
 
   async findOne(id: number) {
-    const book = await this.bookRepository.findOne({ where: { id }, relations: ['category', 'copies'] });
+    const book = await this.bookRepository.findOne({ where: { id, isArchived: false }, relations: ['category', 'copies'] });
     if (!book) throw new NotFoundException(`Book #${id} not found`);
     return book;
   }
@@ -57,12 +71,13 @@ export class BooksService {
 
   async remove(id: number) {
     const book = await this.findOne(id);
-    return this.bookRepository.remove(book);
+    book.isArchived = true;
+    return this.bookRepository.save(book);
   }
 
   // Category methods
   findAllCategories() {
-    return this.categoryRepository.find({ relations: ['books'] });
+    return this.categoryRepository.find({ order: { name: 'ASC' } });
   }
 
   async createCategory(name: string) {

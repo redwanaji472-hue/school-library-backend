@@ -2,10 +2,13 @@ import { Controller, Get, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuditLogsService } from './audit-logs.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('Audit Logs')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
 @Controller('audit-logs')
 export class AuditLogsController {
   constructor(private readonly auditLogsService: AuditLogsService) {}

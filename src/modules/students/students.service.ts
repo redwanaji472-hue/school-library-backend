@@ -41,6 +41,12 @@ export class StudentsService {
     return this.toResponse(student);
   }
 
+  async findByUserId(userId: number) {
+    const student = await this.findWithClassAndRole('user.id = :userId', { userId });
+    if (!student) throw new NotFoundException('Student profile not found for this account');
+    return this.toResponse(student);
+  }
+
   private findWithClassAndRole(condition: string, parameters: Record<string, unknown>) {
     return this.studentRepository
       .createQueryBuilder('student')

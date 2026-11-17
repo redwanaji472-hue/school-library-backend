@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -8,29 +8,13 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
-export class UsersService implements OnModuleInit {
+export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
   ) {}
-
-  async onModuleInit() {
-    const studentRole = await this.roleRepository.findOne({ where: { name: 'student' } });
-    if (!studentRole) {
-      // Keep the serial counter aligned when role rows were inserted manually or restored from a backup.
-      await this.userRepository.query(`
-        SELECT setval(
-          pg_get_serial_sequence('roles', 'id'),
-          COALESCE(MAX(id), 1),
-          MAX(id) IS NOT NULL
-        )
-        FROM roles
-      `);
-      await this.roleRepository.save(this.roleRepository.create({ name: 'student' }));
-    }
-  }
 
   findAll() {
     return this.userRepository.find({ relations: ['role'] });

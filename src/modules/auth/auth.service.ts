@@ -6,12 +6,15 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { User } from '../users/entities/user.entity';
+import { Student } from '../students/entities/student.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Student>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -26,7 +29,19 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: user.id, username: user.username, role: user.role?.name };
+    const student = user.role?.name === 'student'
+      ? await this.studentRepository.findOne({ where: { userId: user.id } })
+      : null;
+    if (user.role?.name === 'student' && !student) {
+      throw new UnauthorizedException('Student account is not linked to a student profile');
+    }
+
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role?.name,
+      ...(student ? { studentId: student.id } : {}),
+    };
     const token = this.jwtService.sign(payload);
 
     return {
@@ -36,6 +51,7 @@ export class AuthService {
         username: user.username,
         fullName: user.fullName,
         role: user.role?.name,
+        ...(student ? { studentId: student.id } : {}),
       },
     };
   }

@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../users/entities/role.entity';
 import { User } from '../users/entities/user.entity';
@@ -14,6 +15,7 @@ export class SeedService implements OnModuleInit {
     private readonly roleRepository: Repository<Role>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async onModuleInit() {
@@ -30,14 +32,26 @@ export class SeedService implements OnModuleInit {
   private async seedRoles() {
     try {
       const roles = ['admin', 'librarian', 'supervisor', 'student'];
+      await this.dataSource.transaction(async (manager) => {
+        // Serialize seeders across replicas and repair a stale serial counter before inserting roles.
+        await manager.query("SELECT pg_advisory_xact_lock(hashtextextended('school-library-role-seed', 0))");
+        await manager.query(`
+          SELECT setval(
+            pg_get_serial_sequence('roles', 'id'),
+            COALESCE(MAX(id), 1),
+            MAX(id) IS NOT NULL
+          )
+          FROM roles
+        `);
 
-      for (const roleName of roles) {
-        const exists = await this.roleRepository.findOne({ where: { name: roleName } });
-        if (!exists) {
-          await this.roleRepository.save(this.roleRepository.create({ name: roleName }));
-          this.logger.log(`Created role: ${roleName}`);
+        for (const roleName of roles) {
+          const exists = await manager.findOne(Role, { where: { name: roleName } });
+          if (!exists) {
+            await manager.save(manager.create(Role, { name: roleName }));
+            this.logger.log(`Created role: ${roleName}`);
+          }
         }
-      }
+      });
 
       this.logger.log('✅ Roles seeded successfully');
     } catch (error) {

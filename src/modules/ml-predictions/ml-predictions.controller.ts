@@ -2,10 +2,13 @@ import { Controller, Get, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { MlPredictionsService } from './ml-predictions.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('ML Predictions')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin', 'supervisor')
 @Controller('ml-predictions')
 export class MlPredictionsController {
   constructor(private readonly mlPredictionsService: MlPredictionsService) {}

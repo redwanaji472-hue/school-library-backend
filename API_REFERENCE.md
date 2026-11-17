@@ -307,6 +307,10 @@ Authorization: Bearer <token>
 
 ## 🎓 Students
 
+### GET /students/me
+
+يعيد ملف الطالب المرتبط بالحساب الحالي. متاح لدور `student` فقط، ويتطلب تسجيل الدخول.
+
 ### GET /students
 
 قائمة الطلاب.
@@ -355,6 +359,13 @@ Authorization: Bearer <token>
 
 `GET /students` returns each student's `username` and `role` at the top level. Existing students without a linked login account return `null` for those fields.
 
+### نقاط مهمة للنسخة الأولى
+
+- يدخل الطالب من `POST /auth/login` باستخدام `username` و`password` اللذين ينشئهما الموظف عند إضافة الطالب.
+- يعيد تسجيل الدخول `studentId` ضمن بيانات المستخدم ورمز JWT؛ لا يحتاج تطبيق الطالب إلى تمرير معرّف طالب من عنده.
+- يستطيع الطالب قراءة ملفه فقط من `GET /students/me`، وقراءة إعاراته من `GET /loans/me`، ونقاطه من `GET /points/me`.
+- إنشاء الطالب وحساب الدخول عملية واحدة؛ إذا فشل إنشاء أحدهما تُلغى العملية كاملة.
+
 ---
 
 ## 📝 Classes
@@ -396,6 +407,34 @@ Authorization: Bearer <token>
 ---
 
 ## 📦 Loans
+
+### GET /loans/me
+
+إعارات الطالب الحالي مع تفاصيل الكتب ومواعيد الإرجاع. متاح لدور `student` فقط.
+
+### POST /loans/checkout
+
+إعارة نسخة بعد مسح QR الطالب وQR النسخة. متاح لأمين المكتبة والإدارة فقط.
+
+```json
+{
+  "studentQrCode": "STU-2DBEB280",
+  "copyQrCode": "BK-AB12CD"
+}
+```
+
+مدة الإعارة الافتراضية 14 يوماً، والحد الأعلى 3 إعارات نشطة للطالب. يجري تحديث حالة النسخة وإنشاء الإعارة ضمن معاملة واحدة.
+
+### PATCH /loans/return
+
+إرجاع نسخة بمسح QR النسخة. يمكن تعليم النسخة كمتاحة أو كصيانة.
+
+```json
+{
+  "copyQrCode": "BK-AB12CD",
+  "copyStatus": "available"
+}
+```
 
 ### GET /loans
 
@@ -550,6 +589,10 @@ Authorization: Bearer <token>
 ---
 
 ## 🏆 Points
+
+### GET /points/me
+
+يعيد رصيد النقاط وسجل الطالب الحالي. الطالب يقرأ النقاط فقط؛ تعديلها متاح للإدارة والمشرف.
 
 ### GET /points/student/:id
 
