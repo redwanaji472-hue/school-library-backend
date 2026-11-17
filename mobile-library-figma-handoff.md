@@ -15,9 +15,9 @@ Import [`mobile-library-figma.svg`](./mobile-library-figma.svg) into Figma (File
 
 All listed routes except login require a bearer token. Login uses `POST /api/auth/login` with `username` and `password`, returning `access_token` and a staff user/role.
 
-## Backend gaps to resolve before a student app can use real accounts
+## Backend gaps to resolve before the full student app is ready
 
-- There is no student login or student-to-user identity link. The existing JWT belongs to a system user, while points and reservations require a separate `studentId` supplied by the caller.
+- `POST /api/students` creates a student login account and links it to the student row. The JWT still identifies the `users.id`, not `studentId`; add authenticated `me` endpoints or resolve the student link server-side before exposing student-specific data.
 - Loan, reservation, and book list endpoints return collection-level data; there is no endpoint that scopes these records to the signed-in student. Add authenticated `me` endpoints or enforce student ownership server-side before using them in the app.
 - Book browse has no search or category-filter query contract. The client can filter a fetched catalogue, or the API can add query parameters.
 - Loan checkout currently accepts student and book-copy QR codes, matching a librarian scanning a student and copy. A student self-checkout flow is not represented by this endpoint.

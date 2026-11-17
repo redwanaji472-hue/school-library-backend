@@ -5,8 +5,7 @@ import { config } from 'dotenv';
 config();
 
 // NOTE: This DataSource config is for TypeORM CLI only (migration:generate, etc.)
-// It is NOT used at runtime. The app uses getDatabaseConfig() from database.config.ts
-// Migrations are disabled - using synchronize for initial deploy
+// It is NOT used at runtime. The app uses getDatabaseConfig() from database.config.ts.
 export default new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
@@ -15,6 +14,6 @@ export default new DataSource({
   password: process.env.DB_PASS || 'postgres',
   database: process.env.DB_NAME || 'school_library',
   entities: ['src/**/*.entity.ts'],
-  migrations: [], // No migrations - using entity synchronization
+  migrations: ['src/migrations/*{.ts,.js}'],
   synchronize: false,
 });

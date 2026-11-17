@@ -19,19 +19,46 @@ export class StudentsService {
   ) {}
 
   findAll() {
-    return this.studentRepository.find({ relations: ['class'] });
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.class', 'class')
+      .leftJoin('student.user', 'user')
+      .leftJoin('user.role', 'role')
+      .addSelect(['user.id', 'user.username', 'role.id', 'role.name'])
+      .getMany()
+      .then((students) => students.map((student) => this.toResponse(student)));
   }
 
   async findOne(id: number) {
-    const student = await this.studentRepository.findOne({ where: { id }, relations: ['class'] });
+    const student = await this.findWithClassAndRole('student.id = :id', { id });
     if (!student) throw new NotFoundException(`Student #${id} not found`);
-    return student;
+    return this.toResponse(student);
   }
 
   async findByQr(qrCode: string) {
-    const student = await this.studentRepository.findOne({ where: { qrCode }, relations: ['class'] });
+    const student = await this.findWithClassAndRole('student.qrCode = :qrCode', { qrCode });
     if (!student) throw new NotFoundException(`Student with QR ${qrCode} not found`);
-    return student;
+    return this.toResponse(student);
+  }
+
+  private findWithClassAndRole(condition: string, parameters: Record<string, unknown>) {
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.class', 'class')
+      .leftJoin('student.user', 'user')
+      .leftJoin('user.role', 'role')
+      .addSelect(['user.id', 'user.username', 'role.id', 'role.name'])
+      .where(condition, parameters)
+      .getOne();
+  }
+
+  private toResponse(student: Student) {
+    const { user, ...studentData } = student;
+    return {
+      ...studentData,
+      username: user?.username ?? null,
+      role: user?.role?.name ?? null,
+    };
   }
 
   async create(dto: CreateStudentDto) {
@@ -60,24 +87,29 @@ export class StudentsService {
         classId: dto.classId,
         fullName: dto.fullName,
         qrCode,
+        userId: savedUser.id,
       });
       const savedStudent = await manager.save(student);
 
       return {
         ...savedStudent,
-        user: { id: savedUser.id, username: savedUser.username, role: 'student' },
+        username: savedUser.username,
+        role: 'student',
       };
     });
   }
 
   async update(id: number, dto: UpdateStudentDto) {
-    const student = await this.findOne(id);
+    const student = await this.studentRepository.findOne({ where: { id } });
+    if (!student) throw new NotFoundException(`Student #${id} not found`);
     Object.assign(student, dto);
-    return this.studentRepository.save(student);
+    await this.studentRepository.save(student);
+    return this.findOne(id);
   }
 
   async remove(id: number) {
-    const student = await this.findOne(id);
+    const student = await this.studentRepository.findOne({ where: { id } });
+    if (!student) throw new NotFoundException(`Student #${id} not found`);
     return this.studentRepository.remove(student);
   }
 }

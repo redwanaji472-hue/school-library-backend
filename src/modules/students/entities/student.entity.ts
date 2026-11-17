@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 import { Class } from './class.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('students')
 export class Student {
@@ -12,6 +13,13 @@ export class Student {
   @ManyToOne(() => Class, (cls) => cls.students)
   @JoinColumn({ name: 'class_id' })
   class: Class;
+
+  @Column({ name: 'user_id', nullable: true, unique: true })
+  userId: number | null;
+
+  @OneToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({ name: 'full_name' })
   fullName: string;

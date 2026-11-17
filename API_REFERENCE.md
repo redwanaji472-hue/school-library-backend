@@ -320,18 +320,18 @@ Authorization: Bearer <token>
 [
   {
     "id": 1,
-    "studentId": "STD001",
-    "firstName": "أحمد",
-    "lastName": "محمد",
-    "dateOfBirth": "2015-05-15",
-    "gender": "male",
-    "totalPoints": 50,
-    "readingLevel": "beginner",
-    "isActive": true,
+    "classId": 1,
+    "fullName": "Ahmed Mohamed",
+    "qrCode": "STU-2DBEB280",
+    "status": "active",
+    "totalPoints": 0,
+    "username": "ahmed.mohamed",
+    "role": "student",
     "class": {
       "id": 1,
-      "name": "الصف الأول أ",
-      "grade": 1
+      "grade": "5",
+      "section": "QA",
+      "academicYear": "2026-2027"
     }
   }
 ]
@@ -353,23 +353,7 @@ Authorization: Bearer <token>
 }
 ```
 
-إضافة طالب جديد.
-
-**Request:**
-```json
-{
-  "studentId": "STD004",
-  "firstName": "سارة",
-  "lastName": "علي",
-  "dateOfBirth": "2016-03-20",
-  "gender": "female",
-  "parentPhone": "0551234567",
-  "parentEmail": "parent@email.com",
-  "address": "الرياض",
-  "classId": 1,
-  "readingLevel": "beginner"
-}
-```
+`GET /students` returns each student's `username` and `role` at the top level. Existing students without a linked login account return `null` for those fields.
 
 ---
 
