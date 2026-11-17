@@ -19,6 +19,15 @@ export class UsersService implements OnModuleInit {
   async onModuleInit() {
     const studentRole = await this.roleRepository.findOne({ where: { name: 'student' } });
     if (!studentRole) {
+      // Keep the serial counter aligned when role rows were inserted manually or restored from a backup.
+      await this.userRepository.query(`
+        SELECT setval(
+          pg_get_serial_sequence('roles', 'id'),
+          COALESCE(MAX(id), 1),
+          MAX(id) IS NOT NULL
+        )
+        FROM roles
+      `);
       await this.roleRepository.save(this.roleRepository.create({ name: 'student' }));
     }
   }
