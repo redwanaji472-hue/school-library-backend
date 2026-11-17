@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
+import { Role } from './entities/role.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -11,6 +12,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
   ) {}
 
   findAll() {
@@ -24,11 +27,32 @@ export class UsersService {
   }
 
   async create(dto: CreateUserDto) {
+    if ((dto.roleId !== undefined) === (dto.role !== undefined)) {
+      throw new ConflictException('Provide exactly one of role or roleId');
+    }
+
     const existing = await this.userRepository.findOne({ where: { username: dto.username } });
     if (existing) throw new ConflictException('Username already exists');
+
+    const role = dto.role
+      ? await this.roleRepository.findOne({ where: { name: dto.role } })
+      : await this.roleRepository.findOne({ where: { id: dto.roleId } });
+    if (!role) throw new NotFoundException('Selected role was not found');
+
     const password = await bcrypt.hash(dto.password, 10);
-    const user = this.userRepository.create({ ...dto, password });
-    return this.userRepository.save(user);
+    const user = this.userRepository.create({
+      roleId: role.id,
+      fullName: dto.fullName,
+      username: dto.username,
+      password,
+      isActive: dto.isActive ?? true,
+    });
+    const saved = await this.userRepository.save(user);
+    return { id: saved.id, username: saved.username, fullName: saved.fullName, role: role.name, isActive: saved.isActive };
+  }
+
+  getRoles() {
+    return this.roleRepository.find({ order: { id: 'ASC' } });
   }
 
   async update(id: number, dto: UpdateUserDto) {

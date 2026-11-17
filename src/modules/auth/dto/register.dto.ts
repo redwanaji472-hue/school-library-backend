@@ -2,7 +2,7 @@ import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, MinLength } from 'c
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class RegisterDto {
-  @ApiProperty({ example: 1, description: 'Role ID (1=admin, 2=librarian, 3=supervisor)' })
+  @ApiProperty({ example: 4, description: 'Role ID; fetch available IDs from GET /users/roles' })
   @IsInt()
   roleId: number;
 

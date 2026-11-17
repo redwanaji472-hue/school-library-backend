@@ -29,7 +29,7 @@ export class SeedService implements OnModuleInit {
 
   private async seedRoles() {
     try {
-      const roles = ['admin', 'librarian', 'supervisor'];
+      const roles = ['admin', 'librarian', 'supervisor', 'student'];
 
       for (const roleName of roles) {
         const exists = await this.roleRepository.findOne({ where: { name: roleName } });

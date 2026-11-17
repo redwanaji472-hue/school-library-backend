@@ -39,7 +39,7 @@
 
 ### POST /auth/register
 
-تسجيل مستخدم جديد (يتطلب صلاحيات admin).
+تسجيل مستخدم جديد (يتطلب JWT وصلاحية admin). لا يمكن إنشاء حسابات من التطبيق العام.
 
 **Request:**
 ```json
@@ -116,9 +116,13 @@ Authorization: Bearer <token>
 
 ---
 
+### GET /users/roles
+
+إرجاع الأدوار المتاحة لقائمة Role في نموذج Add User. يتطلب JWT وصلاحية admin.
+
 ### POST /users
 
-إنشاء مستخدم جديد (admin فقط).
+إنشاء مستخدم جديد (admin فقط). يمكن اختيار `student` ليكون حساب الطالب مستخدماً عادياً.
 
 **Request:**
 ```json
@@ -126,10 +130,12 @@ Authorization: Bearer <token>
   "username": "teacher1",
   "password": "TeacherPass123!",
   "fullName": "المعلم الأول",
-  "roleId": 3,
+  "role": "student",
   "isActive": true
 }
 ```
+
+الأدوار المتاحة عبر `GET /users/roles`: `admin`, `librarian`, `supervisor`, `student`. يرسل النموذج `role` أو `roleId` واحداً فقط. يتم إنشاء دور `student` تلقائياً عند تشغيل seed.
 
 ---
 

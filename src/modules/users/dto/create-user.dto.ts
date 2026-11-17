@@ -1,10 +1,21 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 1, description: 'Role ID' })
+  @ApiPropertyOptional({ example: 1, description: 'Role ID (use role or roleId)' })
   @IsInt()
-  roleId: number;
+  @IsOptional()
+  roleId?: number;
+
+  @ApiPropertyOptional({
+    example: 'student',
+    enum: ['admin', 'librarian', 'supervisor', 'student'],
+    description: 'Role name. The student role is a regular user account.',
+  })
+  @IsString()
+  @IsIn(['admin', 'librarian', 'supervisor', 'student'])
+  @IsOptional()
+  role?: string;
 
   @ApiProperty({ example: 'John Doe', description: 'Full name' })
   @IsString()
