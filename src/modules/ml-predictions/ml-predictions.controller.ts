@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { MlPredictionsService } from './ml-predictions.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -22,8 +22,12 @@ export class MlPredictionsController {
   @Get('recommend/:studentId')
   @ApiOperation({ summary: 'Recommend books for a student based on reading history' })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  recommendBooks(@Param('studentId', ParseIntPipe) studentId: number, @Query('limit') limit?: number) {
-    return this.mlPredictionsService.recommendBooks(studentId, limit ?? 5);
+  recommendBooks(@Param('studentId', ParseIntPipe) studentId: number, @Query('limit') limit?: string) {
+    const parsedLimit = limit === undefined ? 5 : Number(limit);
+    if (!Number.isInteger(parsedLimit) || parsedLimit < 1 || parsedLimit > 100) {
+      throw new BadRequestException('limit must be an integer between 1 and 100');
+    }
+    return this.mlPredictionsService.recommendBooks(studentId, parsedLimit);
   }
 
   @Get('library-health')

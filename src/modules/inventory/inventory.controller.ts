@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Patch, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { InventoryService } from './inventory.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -31,8 +31,12 @@ export class InventoryController {
   @Roles('admin', 'librarian', 'supervisor')
   @ApiOperation({ summary: 'Get books with low available copies' })
   @ApiQuery({ name: 'threshold', required: false, type: Number })
-  getLowStock(@Query('threshold') threshold?: number) {
-    return this.inventoryService.getBooksWithLowStock(threshold ?? 1);
+  getLowStock(@Query('threshold') threshold?: string) {
+    const parsedThreshold = threshold === undefined ? 1 : Number(threshold);
+    if (!Number.isInteger(parsedThreshold) || parsedThreshold < 0) {
+      throw new BadRequestException('threshold must be a non-negative integer');
+    }
+    return this.inventoryService.getBooksWithLowStock(parsedThreshold);
   }
 
   @Patch('copies/:id/status')

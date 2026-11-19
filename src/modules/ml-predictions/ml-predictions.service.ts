@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from '../students/entities/student.entity';
@@ -32,7 +32,7 @@ export class MlPredictionsService {
    */
   async predictStudentRisk(studentId: number) {
     const student = await this.studentRepository.findOne({ where: { id: studentId } });
-    if (!student) throw new Error(`Student #${studentId} not found`);
+    if (!student) throw new NotFoundException(`Student #${studentId} not found`);
 
     const loans = await this.loanRepository.count({ where: { studentId } });
     const activities = await this.activityRepository.count({ where: { studentId } });
@@ -69,6 +69,9 @@ export class MlPredictionsService {
    * Recommend books for a student based on their reading history and category preferences.
    */
   async recommendBooks(studentId: number, limit = 5) {
+    const student = await this.studentRepository.findOne({ where: { id: studentId } });
+    if (!student) throw new NotFoundException(`Student #${studentId} not found`);
+
     // Find the student's most-read categories from loan history
     const loans = await this.loanRepository.find({
       where: { studentId },
