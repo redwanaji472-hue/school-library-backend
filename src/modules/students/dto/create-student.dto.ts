@@ -1,9 +1,10 @@
-import { IsInt, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Min, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateStudentDto {
   @ApiProperty({ example: 1, description: 'Class ID' })
   @IsInt()
+  @Min(1)
   classId: number;
 
   @ApiProperty({ example: 'Ahmed Mohamed', description: 'Student full name' })
@@ -20,4 +21,9 @@ export class CreateStudentDto {
   @IsString()
   @MinLength(6)
   password: string;
+
+  @ApiPropertyOptional({ example: true, description: 'Whether the linked login account is active' })
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }

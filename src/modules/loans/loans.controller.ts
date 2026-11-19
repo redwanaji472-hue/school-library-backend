@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, UseGuards, Request, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { LoansService } from './loans.service';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { RenewLoanDto } from './dto/renew-loan.dto';
 import { ReturnLoanDto } from './dto/return-loan.dto';
+import { LoansQueryDto } from './dto/loans-query.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -18,15 +19,15 @@ export class LoansController {
   @Get('me')
   @Roles('student')
   @ApiOperation({ summary: 'Get the signed-in student loan history' })
-  getMyLoans(@Request() req: any) {
-    return this.loansService.findByStudent(req.user.studentId);
+  getMyLoans(@Request() req: any, @Query() query: LoansQueryDto) {
+    return this.loansService.findByStudent(req.user.studentId, query);
   }
 
   @Get()
   @Roles('admin', 'librarian', 'supervisor')
-  @ApiOperation({ summary: 'Get all loans' })
-  findAll() {
-    return this.loansService.findAll();
+  @ApiOperation({ summary: 'Search, filter, and paginate loans' })
+  findAll(@Query() query: LoansQueryDto) {
+    return this.loansService.findAll(query);
   }
 
   @Get('active')

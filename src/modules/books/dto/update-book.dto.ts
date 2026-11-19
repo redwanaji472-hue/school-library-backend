@@ -1,9 +1,10 @@
-import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateBookDto {
   @ApiPropertyOptional({ example: 2 })
   @IsInt()
+  @Min(1)
   @IsOptional()
   categoryId?: number;
 
@@ -29,6 +30,7 @@ export class UpdateBookDto {
 
   @ApiPropertyOptional({ example: 2024 })
   @IsInt()
+  @Min(0)
   @IsOptional()
   publicationYear?: number;
 
@@ -39,6 +41,7 @@ export class UpdateBookDto {
 
   @ApiPropertyOptional({ example: 300 })
   @IsInt()
+  @Min(1)
   @IsOptional()
   pages?: number;
 
@@ -49,8 +52,15 @@ export class UpdateBookDto {
 
   @ApiPropertyOptional({ example: 'Book description...' })
   @IsString()
+  @MaxLength(5000)
   @IsOptional()
   description?: string;
+
+  @ApiPropertyOptional({ example: 'https://example.com/covers/book.jpg' })
+  @IsString()
+  @MaxLength(2048)
+  @IsOptional()
+  coverImage?: string;
 
   @ApiPropertyOptional({ example: false })
   @IsBoolean()

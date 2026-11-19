@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { StudentsQueryDto } from './dto/students-query.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -21,11 +22,26 @@ export class StudentsController {
     return this.studentsService.findByUserId(req.user.id);
   }
 
+  @Get('classes')
+  @Roles('admin', 'librarian', 'supervisor')
+  @ApiOperation({ summary: 'Get class and section options for student forms' })
+  @ApiQuery({ name: 'academicYear', required: false, type: String })
+  findClasses(@Query('academicYear') academicYear?: string) {
+    return this.studentsService.findClasses(academicYear);
+  }
+
   @Get()
   @Roles('admin', 'librarian', 'supervisor')
-  @ApiOperation({ summary: 'Get all students' })
-  findAll() {
-    return this.studentsService.findAll();
+  @ApiOperation({ summary: 'Search and filter students with pagination' })
+  findAll(@Query() query: StudentsQueryDto) {
+    return this.studentsService.findAll(query);
+  }
+
+  @Get('qr/:qrCode')
+  @Roles('admin', 'librarian', 'supervisor')
+  @ApiOperation({ summary: 'Get student by QR code' })
+  findByQr(@Param('qrCode') qrCode: string) {
+    return this.studentsService.findByQr(qrCode);
   }
 
   @Get(':id')
@@ -34,13 +50,6 @@ export class StudentsController {
   @ApiResponse({ status: 404, description: 'Student not found' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.studentsService.findOne(id);
-  }
-
-  @Get('qr/:qrCode')
-  @Roles('admin', 'librarian', 'supervisor')
-  @ApiOperation({ summary: 'Get student by QR code' })
-  findByQr(@Param('qrCode') qrCode: string) {
-    return this.studentsService.findByQr(qrCode);
   }
 
   @Post()

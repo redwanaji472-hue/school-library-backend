@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { BookCopy } from '../books/entities/book-copy.entity';
 import { Book } from '../books/entities/book.entity';
 import { Loan } from '../loans/entities/loan.entity';
+import { Student } from '../students/entities/student.entity';
 
 @Injectable()
 export class InventoryService {
@@ -14,20 +15,36 @@ export class InventoryService {
     private readonly bookRepository: Repository<Book>,
     @InjectRepository(Loan)
     private readonly loanRepository: Repository<Loan>,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Student>,
   ) {}
 
   async getSummary() {
-    const totalBooks = await this.bookRepository.count();
-    const totalCopies = await this.copyRepository.count();
+    const totalBooks = await this.bookRepository.count({ where: { isArchived: false } });
+    const totalCopies = await this.copyRepository
+      .createQueryBuilder('copy')
+      .innerJoin('copy.book', 'book', 'book.isArchived = false')
+      .getCount();
+    const totalStudents = await this.studentRepository.count();
+    const activeStudents = await this.studentRepository
+      .createQueryBuilder('student')
+      .innerJoin('student.user', 'user')
+      .where('student.status = :status', { status: 'active' })
+      .andWhere('user.isActive = true')
+      .getCount();
 
     const statusCounts = await this.copyRepository
       .createQueryBuilder('copy')
+      .innerJoin('copy.book', 'book', 'book.isArchived = false')
       .select('copy.status', 'status')
       .addSelect('COUNT(*)', 'count')
       .groupBy('copy.status')
       .getRawMany();
 
-    const activeLoans = await this.loanRepository.count({ where: { returnDate: undefined as any } });
+    const activeLoans = await this.loanRepository
+      .createQueryBuilder('loan')
+      .where('loan.returnDate IS NULL')
+      .getCount();
     const overdueLoans = await this.loanRepository
       .createQueryBuilder('loan')
       .where('loan.returnDate IS NULL')
@@ -37,6 +54,8 @@ export class InventoryService {
     return {
       totalBooks,
       totalCopies,
+      totalStudents,
+      activeStudents,
       activeLoans,
       overdueLoans,
       copiesByStatus: statusCounts,
@@ -58,6 +77,7 @@ export class InventoryService {
     const books = await this.bookRepository
       .createQueryBuilder('book')
       .leftJoin('book.copies', 'copy')
+      .where('book.isArchived = false')
       .select('book.id', 'id')
       .addSelect('book.title', 'title')
       .addSelect('book.author', 'author')

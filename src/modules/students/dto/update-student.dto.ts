@@ -1,9 +1,10 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateStudentDto {
   @ApiPropertyOptional({ example: 2 })
   @IsInt()
+  @Min(1)
   @IsOptional()
   classId?: number;
 
@@ -13,7 +14,12 @@ export class UpdateStudentDto {
   fullName?: string;
 
   @ApiPropertyOptional({ example: 'active', enum: ['active', 'transferred', 'graduated', 'suspended'] })
-  @IsString()
+  @IsIn(['active', 'transferred', 'graduated', 'suspended'])
   @IsOptional()
   status?: string;
+
+  @ApiPropertyOptional({ example: true, description: 'Enable or disable the linked login account' })
+  @IsBoolean()
+  @IsOptional()
+  accountActive?: boolean;
 }

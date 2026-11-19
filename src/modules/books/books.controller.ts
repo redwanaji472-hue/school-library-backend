@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Query, BadRequestException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { BooksQueryDto } from './dto/books-query.dto';
+import { CreateCategoryDto } from './dto/create-category.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -16,15 +18,9 @@ export class BooksController {
 
   @Get()
   @Roles('admin', 'librarian', 'supervisor', 'student')
-  @ApiOperation({ summary: 'Search active books with copies' })
-  @ApiQuery({ name: 'search', required: false, description: 'Search title, author, or ISBN' })
-  @ApiQuery({ name: 'categoryId', required: false, type: Number })
-  findAll(@Query('search') search?: string, @Query('categoryId') categoryId?: string) {
-    const parsedCategoryId = categoryId === undefined ? undefined : Number(categoryId);
-    if (parsedCategoryId !== undefined && (!Number.isInteger(parsedCategoryId) || parsedCategoryId < 1)) {
-      throw new BadRequestException('categoryId must be a positive integer');
-    }
-    return this.booksService.findAll(search, parsedCategoryId);
+  @ApiOperation({ summary: 'Search active books with pagination' })
+  findAll(@Query() query: BooksQueryDto) {
+    return this.booksService.findAll(query.search, query.categoryId, query.page ?? 1, query.limit ?? 20);
   }
 
   @Get('categories')
@@ -32,6 +28,13 @@ export class BooksController {
   @ApiOperation({ summary: 'Get book categories' })
   getCategories() {
     return this.booksService.findAllCategories();
+  }
+
+  @Post('categories')
+  @Roles('admin', 'librarian')
+  @ApiOperation({ summary: 'Create a book category' })
+  createCategory(@Body() dto: CreateCategoryDto) {
+    return this.booksService.createCategory(dto.name.trim());
   }
 
   @Get(':id')

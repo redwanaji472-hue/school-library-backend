@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
@@ -19,7 +19,7 @@ export class BooksService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  findAll(search?: string, categoryId?: number) {
+  async findAll(search?: string, categoryId?: number, page = 1, limit = 20) {
     const query = this.bookRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.category', 'category')
@@ -34,7 +34,12 @@ export class BooksService {
     }
     if (categoryId) query.andWhere('book.categoryId = :categoryId', { categoryId });
 
-    return query.orderBy('book.title', 'ASC').getMany();
+    const [items, total] = await query
+      .orderBy('book.title', 'ASC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+    return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async findOne(id: number) {
@@ -81,6 +86,9 @@ export class BooksService {
   }
 
   async createCategory(name: string) {
+    if (!name) throw new BadRequestException('Category name is required');
+    const existing = await this.categoryRepository.findOne({ where: { name } });
+    if (existing) throw new ConflictException('Category already exists');
     const category = this.categoryRepository.create({ name });
     return this.categoryRepository.save(category);
   }

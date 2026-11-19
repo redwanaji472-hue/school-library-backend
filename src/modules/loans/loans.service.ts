@@ -6,6 +6,7 @@ import { BookCopy } from '../books/entities/book-copy.entity';
 import { Book } from '../books/entities/book.entity';
 import { Student } from '../students/entities/student.entity';
 import { CreateLoanDto } from './dto/create-loan.dto';
+import { LoansQueryDto } from './dto/loans-query.dto';
 
 @Injectable()
 export class LoansService {
@@ -19,8 +20,35 @@ export class LoansService {
     private readonly dataSource: DataSource,
   ) {}
 
-  findAll() {
-    return this.loanRepository.find({ relations: ['copy', 'copy.book', 'student', 'librarian'] });
+  async findAll(filters: LoansQueryDto) {
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 20;
+    const now = new Date();
+    const query = this.loanRepository
+      .createQueryBuilder('loan')
+      .leftJoinAndSelect('loan.copy', 'copy')
+      .leftJoinAndSelect('copy.book', 'book')
+      .leftJoinAndSelect('loan.student', 'student')
+      .leftJoinAndSelect('loan.librarian', 'librarian');
+
+    if (filters.status === 'active') query.andWhere('loan.returnDate IS NULL');
+    if (filters.status === 'overdue') {
+      query.andWhere('loan.returnDate IS NULL').andWhere('loan.dueDate < :now', { now });
+    }
+    if (filters.status === 'returned') query.andWhere('loan.returnDate IS NOT NULL');
+    if (filters.search?.trim()) {
+      query.andWhere(
+        '(student.fullName ILIKE :search OR book.title ILIKE :search OR copy.qrCode ILIKE :search)',
+        { search: `%${filters.search.trim()}%` },
+      );
+    }
+
+    const [items, total] = await query
+      .orderBy('loan.dueDate', 'ASC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+    return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async findOne(id: number) {
@@ -29,12 +57,29 @@ export class LoansService {
     return loan;
   }
 
-  findByStudent(studentId: number) {
-    return this.loanRepository.find({
-      where: { studentId },
-      relations: ['copy', 'copy.book', 'student'],
-      order: { loanDate: 'DESC' },
-    });
+  async findByStudent(studentId: number, filters: LoansQueryDto) {
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 20;
+    const now = new Date();
+    const query = this.loanRepository
+      .createQueryBuilder('loan')
+      .leftJoinAndSelect('loan.copy', 'copy')
+      .leftJoinAndSelect('copy.book', 'book')
+      .leftJoinAndSelect('loan.student', 'student')
+      .where('loan.studentId = :studentId', { studentId });
+
+    if (filters.status === 'active') query.andWhere('loan.returnDate IS NULL');
+    if (filters.status === 'overdue') {
+      query.andWhere('loan.returnDate IS NULL').andWhere('loan.dueDate < :now', { now });
+    }
+    if (filters.status === 'returned') query.andWhere('loan.returnDate IS NOT NULL');
+
+    const [items, total] = await query
+      .orderBy('loan.loanDate', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+    return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async checkout(dto: CreateLoanDto, librarianId: number) {
